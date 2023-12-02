@@ -7,6 +7,7 @@ include_directories(./common)
 
 # ADD SUBDIRECTORY
 add_subdirectory(day01)
+add_subdirectory(day02)
 
 # Common utilities (if any)
 add_library(common STATIC common/utils.cpp)

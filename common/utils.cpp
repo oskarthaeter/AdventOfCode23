@@ -1,22 +1,6 @@
 #include "utils.hpp"
 
-std::vector<std::string> readLinesAsVector(const std::string& filePath) {
-    std::vector<std::string> lines;
-    std::ifstream file(filePath);
-    std::string line;
-
-    if (file.is_open()) {
-        while (getline(file, line)) {
-            lines.push_back(line);
-        }
-        file.close();
-    } else {
-        std::cerr << "Unable to open file: " << filePath << std::endl;
-    }
-
-    return lines;
-}
-
+namespace utils {
 LineIterator::LineIterator() : isEnd(true) {}  // End iterator
 LineIterator::LineIterator(const std::string& filePath)
     : file(std::make_shared<std::ifstream>(filePath)), isEnd(false) {
@@ -83,3 +67,4 @@ void benchmark(std::function<void()> code, const size_t n) {
     std::cout << "Min Duration: " << minDuration.count() << " microseconds\n";
     std::cout << "Max Duration: " << maxDuration.count() << " microseconds\n";
 }
+}  // namespace utils

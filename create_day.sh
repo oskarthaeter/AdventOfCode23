@@ -24,33 +24,66 @@ echo "Created directory: $DAY_DIR"
 cat << EOF > "$DAY_DIR/CMakeLists.txt"
 add_executable(day$DAY_NUMBER main.cpp)
 
-# Link with common utilities if needed
-# target_link_libraries(day$DAY_NUMBER PRIVATE common)
+target_link_libraries(day$DAY_NUMBER PRIVATE common)
 
 add_custom_command(
     TARGET day$DAY_NUMBER POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy
-    ${CMAKE_SOURCE_DIR}/day$DAY_NUMBER/input.txt
-    ${CMAKE_CURRENT_BINARY_DIR}/input.txt)
+    COMMAND \${CMAKE_COMMAND} -E copy
+    \${CMAKE_SOURCE_DIR}/day$DAY_NUMBER/input.txt
+    \${CMAKE_CURRENT_BINARY_DIR}/input.txt)
 EOF
 
 # Create a template main.cpp file
 cat << EOF > "$DAY_DIR/main.cpp"
-#include <iostream>
-#include <fstream>
-#include <string>
+#include "utils.hpp"
+
+namespace original {
+uint64_t solution_one() {
+    try {
+        utils::LineIterator it("input.txt");
+        uint64_t resultSum{0};
+
+        for (; it != utils::LineIterator(); ++it) {
+            std::string_view line = it.currentLineView();
+        }
+        return resultSum;
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        exit(1);
+    }
+}
+
+uint64_t solution_two() {
+    try {
+        utils::LineIterator it("input.txt");
+        uint64_t resultSum{0};
+
+        for (; it != utils::LineIterator(); ++it) {
+            std::string_view line = it.currentLineView();
+        }
+        return resultSum;
+    } catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
+        exit(1);
+    }
+}
+} // namespace original
 
 int main() {
-    std::ifstream file("input.txt");
-    std::string line;
+    const size_t n{100};
 
-    while (std::getline(file, line)) {
-        // Process each line
-    }
+    std::cout << "Solution one" << std::endl;
+    utils::benchmark(original::solution_one, n);
+
+    std::cout << "\nSolution two" << std::endl;
+    utils::benchmark(original::solution_two, n);
 
     return 0;
 }
 EOF
+
+# Create an empty task.md file
+touch "$DAY_DIR/task.md"
 
 # Create an empty input.txt file
 touch "$DAY_DIR/input.txt"

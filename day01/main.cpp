@@ -1,8 +1,4 @@
-#include <fstream>
-#include <iostream>
 #include <regex>
-#include <string>
-#include <unordered_map>
 
 #include "utils.hpp"
 
@@ -63,7 +59,7 @@ int calibrationValue_one(const std::string_view line) {
 
 uint64_t solution_onealt() {
     try {
-        LineIterator it("input.txt");
+        utils::LineIterator it("input.txt");
         uint64_t resultSum{0};
 
         for (const auto& line : it) {
@@ -80,10 +76,10 @@ uint64_t solution_onealt() {
 
 uint64_t solution_one() {
     try {
-        LineIterator it("input.txt");
+        utils::LineIterator it("input.txt");
         uint64_t resultSum{0};
 
-        for (; it != LineIterator(); ++it) {
+        for (; it != utils::LineIterator(); ++it) {
             auto temp = calibrationValue_one(it.currentLineView());
             resultSum += temp;
         }
@@ -151,7 +147,7 @@ int calibrationValue_two(const std::string& line) {
 
 uint64_t solution_two() {
     try {
-        LineIterator lines("input.txt");
+        utils::LineIterator lines("input.txt");
         uint64_t resultSum{0};
 
         for (const auto& line : lines) {
@@ -170,11 +166,11 @@ int main() {
     const size_t n{10};
 
     std::cout << "Solution one" << std::endl;
-    benchmark(solution_one, n);
+    utils::benchmark(solution_one, n);
 
     std::cout << "\nSolution one alternative" << std::endl;
-    benchmark(solution_onealt, n);
+    utils::benchmark(solution_onealt, n);
 
     std::cout << "\nSolution two" << std::endl;
-    benchmark(solution_two, n);
+    utils::benchmark(solution_two, n);
 }

@@ -11,8 +11,7 @@
 #include <string_view>
 #include <vector>
 
-std::vector<std::string> readLinesAsVector(const std::string&);
-
+namespace utils {
 class LineIterator {
    private:
     std::shared_ptr<std::ifstream> file;
@@ -33,3 +32,4 @@ class LineIterator {
 };
 
 void benchmark(std::function<void()>, const size_t);
+}

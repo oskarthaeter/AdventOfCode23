@@ -1,6 +1,5 @@
 add_executable(day01 main.cpp)
 
-# Link with common utilities if needed
 target_link_libraries(day01 PRIVATE common)
 
 add_custom_command(
