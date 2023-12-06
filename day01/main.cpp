@@ -1,37 +1,9 @@
 #include <regex>
 
+#include "FileData.hpp"
 #include "utils.hpp"
 
 using namespace std::literals;
-
-int calibrationValue_onealt(const std::string& line) {
-    const std::regex re_first("^(?:.*?)(\\d)(?:.*)$");  // starts with lazy quantifier
-    const std::regex re_last("^(?:.*)(\\d)(?:.*)$");    // starts with greedy quantifier
-
-    std::smatch firstMatch;
-    std::smatch lastMatch;
-
-    std::ssub_match firstCaptured;
-    std::ssub_match lastCaptured;
-
-    if (std::regex_match(line, firstMatch, re_first)) {
-        // extract the submatch for the capturing group
-        firstCaptured = firstMatch[1];
-    }
-    auto split = firstCaptured.second;
-    if (std::regex_match(split, line.end(), lastMatch, re_last)) {
-        // extract the submatch for the capturing group
-        lastCaptured = lastMatch[1];
-    }
-
-    if (firstMatch.empty()) {
-        return 0;
-    } else if (lastMatch.empty()) {
-        return std::stoi(firstCaptured.str() + firstCaptured.str());
-    } else {
-        return std::stoi(firstCaptured.str() + lastCaptured.str());
-    }
-}
 
 // get first and last digit on line
 // return combination of digits: <first digit><last digit>
@@ -57,30 +29,12 @@ int calibrationValue_one(const std::string_view line) {
     return number.empty() ? 0 : std::stoi(number);
 }
 
-uint64_t solution_onealt() {
-    try {
-        utils::LineIterator it("input.txt");
-        uint64_t resultSum{0};
-
-        for (const auto& line : it) {
-            auto temp = calibrationValue_onealt(line);
-            resultSum += temp;
-        }
-
-        return resultSum;
-    } catch (const std::exception& e) {
-        std::cerr << e.what() << std::endl;
-        exit(1);
-    }
-}
-
 uint64_t solution_one() {
     try {
-        utils::LineIterator it("input.txt");
         uint64_t resultSum{0};
 
-        for (; it != utils::LineIterator(); ++it) {
-            auto temp = calibrationValue_one(it.currentLineView());
+        for (const std::string_view line : input::inputContent) {
+            auto temp = calibrationValue_one(line);
             resultSum += temp;
         }
 
@@ -147,10 +101,9 @@ int calibrationValue_two(const std::string& line) {
 
 uint64_t solution_two() {
     try {
-        utils::LineIterator lines("input.txt");
         uint64_t resultSum{0};
 
-        for (const auto& line : lines) {
+        for (const std::string& line : input::inputContent) {
             auto temp = calibrationValue_two(line);
             resultSum += temp;
         }
@@ -166,11 +119,8 @@ int main() {
     const size_t n{10};
 
     std::cout << "Solution one" << std::endl;
-    utils::benchmark(solution_one, n);
-
-    std::cout << "\nSolution one alternative" << std::endl;
-    utils::benchmark(solution_onealt, n);
+    utils::benchmark<n>(solution_one);
 
     std::cout << "\nSolution two" << std::endl;
-    utils::benchmark(solution_two, n);
+    utils::benchmark<n>(solution_two);
 }

@@ -23,30 +23,24 @@ echo "Created directory: $DAY_DIR"
 # Create a basic CMakeLists.txt file for the day
 cat << EOF > "$DAY_DIR/CMakeLists.txt"
 add_executable(day$DAY_NUMBER main.cpp)
-
 target_link_libraries(day$DAY_NUMBER PRIVATE common)
-
-add_custom_command(
-    TARGET day$DAY_NUMBER POST_BUILD
-    COMMAND \${CMAKE_COMMAND} -E copy
-    \${CMAKE_SOURCE_DIR}/day$DAY_NUMBER/input.txt
-    \${CMAKE_CURRENT_BINARY_DIR}/input.txt)
+target_include_directories(day$DAY_NUMBER PRIVATE \${CMAKE_CURRENT_BINARY_DIR})
 EOF
 
 # Create a template main.cpp file
 cat << EOF > "$DAY_DIR/main.cpp"
+#include "FileData.hpp"
 #include "utils.hpp"
 
 namespace original {
 uint64_t solution_one() {
     try {
-        utils::LineIterator it("input.txt");
-        uint64_t resultSum{0};
+        uint64_t result{0};
 
-        for (; it != utils::LineIterator(); ++it) {
-            std::string_view line = it.currentLineView();
+        for (const std::string& line : input::inputContent) {
+            
         }
-        return resultSum;
+        return result;
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
         exit(1);
@@ -55,13 +49,12 @@ uint64_t solution_one() {
 
 uint64_t solution_two() {
     try {
-        utils::LineIterator it("input.txt");
-        uint64_t resultSum{0};
+        uint64_t result{0};
 
-        for (; it != utils::LineIterator(); ++it) {
-            std::string_view line = it.currentLineView();
+        for (const std::string& line : input::inputContent) {
+            
         }
-        return resultSum;
+        return result;
     } catch (const std::exception& e) {
         std::cerr << e.what() << std::endl;
         exit(1);
@@ -73,10 +66,10 @@ int main() {
     const size_t n{100};
 
     std::cout << "Solution one" << std::endl;
-    utils::benchmark(original::solution_one, n);
+    utils::benchmark<n>(original::solution_one);
 
     std::cout << "\nSolution two" << std::endl;
-    utils::benchmark(original::solution_two, n);
+    utils::benchmark<n>(original::solution_two);
 
     return 0;
 }

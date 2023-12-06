@@ -1,6 +1,7 @@
 #include <array>
 #include <queue>
 
+#include "FileData.hpp"
 #include "utils.hpp"
 
 namespace original {
@@ -8,39 +9,6 @@ namespace original {
 const size_t WINNERS{10};  // 10
 const size_t PICKS{25};    // 25
 const size_t CARDS{193};   // 193
-
-template <std::size_t N>
-std::array<int, N> extractNumbers(const std::string_view& line) {
-    std::array<int, N> numbers;
-    auto head = line.begin();
-    auto end = line.end();
-    size_t counter{0};
-
-    int number;
-    while (head != end) {
-        if (*head == ' ') {
-            // skip whitespace
-            ++head;
-            continue;
-        } else {
-            // Parse the number
-            auto [ptr, ec] = std::from_chars(head, end, number);
-
-            if (ec == std::errc() && counter < N) {
-                numbers[counter++] = number;
-                if (counter == N) {
-                    break;
-                }
-            } else {
-                throw std::runtime_error("Parsing error occurred");
-            }
-
-            // Advance to the next part of the string
-            head = ptr;
-        }
-    }
-    return numbers;
-}
 
 std::pair<std::string_view, std::string_view> extractSubstrings(const std::string_view& line) {
     size_t colonPos = line.find(':');  // always followed by a whitespace
@@ -71,14 +39,12 @@ size_t countMatches(const std::array<int, WINNERS>& winners, const std::array<in
 
 uint64_t solution_one() {
     try {
-        utils::LineIterator it("input.txt");
         uint64_t resultSum{0};
 
-        for (; it != utils::LineIterator(); ++it) {
-            std::string_view line = it.currentLineView();
+        for (const std::string_view line : input::inputContent) {
             auto [winnersSubstring, picksSubstring] = extractSubstrings(line);
-            auto winners = extractNumbers<WINNERS>(winnersSubstring);
-            auto picks = extractNumbers<PICKS>(picksSubstring);
+            auto winners = utils::extractNumbers<int, WINNERS>(winnersSubstring);
+            auto picks = utils::extractNumbers<int, PICKS>(picksSubstring);
 
             auto numMatches = countMatches(winners, picks);
             if (numMatches == 0)
@@ -102,18 +68,17 @@ void addCopies(std::queue<size_t>& scratchcards, size_t cardId, size_t numMatche
 
 uint64_t solution_two() {
     try {
-        utils::LineIterator it("input.txt");
         std::array<size_t, CARDS> cards;
         std::queue<size_t> scratchcards;
+        size_t id{0};
 
-        for (size_t id{0}; it != utils::LineIterator(); ++it, ++id) {
-            std::string_view line = it.currentLineView();
+        for (const std::string_view line : input::inputContent) {
             auto [winnersSubstring, picksSubstring] = extractSubstrings(line);
-            auto winners = extractNumbers<WINNERS>(winnersSubstring);
-            auto picks = extractNumbers<PICKS>(picksSubstring);
+            auto winners = utils::extractNumbers<int, WINNERS>(winnersSubstring);
+            auto picks = utils::extractNumbers<int, PICKS>(picksSubstring);
 
             auto numMatches = countMatches(winners, picks);
-            cards[id] = numMatches;
+            cards[id++] = numMatches;
             scratchcards.push(id);
         }
         uint64_t resultSum{0};
@@ -136,10 +101,10 @@ int main() {
     const size_t n{10};
 
     std::cout << "Solution one" << std::endl;
-    utils::benchmark(original::solution_one, n);
+    utils::benchmark<n>(original::solution_one);
 
     std::cout << "\nSolution two" << std::endl;
-    utils::benchmark(original::solution_two, n);
+    utils::benchmark<n>(original::solution_two);
 
     return 0;
 }

@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "FileData.hpp"
 #include "utils.hpp"
 
 namespace original {
@@ -84,14 +85,12 @@ uint64_t processData(const std::vector<Number>& numbers,
 
 uint64_t solution_one() {
     try {
-        utils::LineIterator it("input.txt");
         std::vector<Number> numbers;
         std::unordered_map<Coordinate, char, pair_hash> symbols;
 
         uint8_t row{0};
 
-        for (; it != utils::LineIterator(); ++it) {
-            const std::string_view line = it.currentLineView();
+        for (const std::string_view line : input::inputContent) {
             parseLine(line, row, numbers, symbols);
             ++row;
         }
@@ -197,14 +196,12 @@ uint64_t processGears(const std::vector<Number>& numbers, const std::vector<Coor
 
 uint64_t solution_two() {
     try {
-        utils::LineIterator it("input.txt");
         std::vector<Number> numbers;
         std::unordered_map<Coordinate, char, pair_hash> symbols;
         std::vector<Coordinate> gears;
         uint8_t row{0};
 
-        for (; it != utils::LineIterator(); ++it) {
-            const std::string_view line = it.currentLineView();
+        for (const std::string_view line : input::inputContent) {
             parseGearLine(line, row, numbers, symbols, gears);
             ++row;
         }
@@ -221,10 +218,10 @@ int main() {
     const size_t n{100};
 
     std::cout << "Solution one" << std::endl;
-    utils::benchmark(original::solution_one, n);
+    utils::benchmark<n>(original::solution_one);
 
     std::cout << "\nSolution two" << std::endl;
-    utils::benchmark(original::solution_two, n);
+    utils::benchmark<n>(original::solution_two);
 
     return 0;
 }

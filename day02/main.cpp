@@ -2,6 +2,7 @@
 #include <iterator>
 #include <unordered_map>
 
+#include "FileData.hpp"
 #include "utils.hpp"
 
 namespace original {
@@ -97,15 +98,13 @@ bool possibleGameset(std::unordered_map<Color, uint> cubes) {
 
 uint64_t solution_one() {
     try {
-        utils::LineIterator it("input.txt");
         uint64_t resultSum{0};
         size_t gameCounter = 1;
         bool gamePossible;
 
-        for (; it != utils::LineIterator(); ++it) {
+        for (const std::string_view line : input::inputContent) {
             gamePossible = true;
-            std::string_view currentGame = it.currentLineView();
-            auto gameSets = extractSets(currentGame);
+            auto gameSets = extractSets(line);
 
             for (auto currentSet : gameSets) {
                 const auto drawings = extractDrawings(currentSet);
@@ -140,13 +139,10 @@ uint64_t cubePower(std::unordered_map<Color, uint> cube) {
 
 uint64_t solution_two() {
     try {
-        utils::LineIterator it("input.txt");
         uint64_t resultSum{0};
 
-        for (; it != utils::LineIterator(); ++it) {
-            std::string_view currentGame = it.currentLineView();
-
-            std::vector<std::string_view> gameSets = extractSets(currentGame);
+        for (const std::string_view line : input::inputContent) {
+            std::vector<std::string_view> gameSets = extractSets(line);
 
             // extract all drawings from the sets
             std::vector<std::string_view> allDrawings;
@@ -171,10 +167,10 @@ int main() {
     const size_t n{100};
 
     std::cout << "Solution one" << std::endl;
-    utils::benchmark(original::solution_one, n);
+    utils::benchmark<n>(original::solution_one);
 
     std::cout << "\nSolution two" << std::endl;
-    utils::benchmark(original::solution_two, n);
+    utils::benchmark<n>(original::solution_two);
 
     return 0;
 }

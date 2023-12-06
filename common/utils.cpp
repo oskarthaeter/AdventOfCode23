@@ -1,6 +1,7 @@
 #include "utils.hpp"
 
 namespace utils {
+
 LineIterator::LineIterator() : isEnd(true) {}  // End iterator
 LineIterator::LineIterator(const std::string& filePath)
     : file(std::make_shared<std::ifstream>(filePath)), isEnd(false) {
@@ -38,33 +39,22 @@ LineIterator LineIterator::end() {
     return LineIterator();
 }
 
-void benchmark(std::function<void()> code, const size_t n) {
-    std::chrono::high_resolution_clock::time_point start;
-    std::chrono::high_resolution_clock::time_point stop;
+std::vector<std::string> readTextFile(const char* filename) {
+    std::vector<std::string> lines;
+    std::ifstream file(filename);
 
-    std::vector<std::chrono::microseconds> durations;
-    std::chrono::microseconds duration;
-
-    for (size_t i = 0; i < n; ++i) {
-        start = std::chrono::high_resolution_clock::now();
-
-        code();
-
-        stop = std::chrono::high_resolution_clock::now();
-
-        duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-        durations.emplace_back(duration);
+    if (!file.is_open()) {
+        std::cerr << "Unable to open file: " << filename << std::endl;
+        return lines;
     }
 
-    // Calculate average, min, and max durations
-    std::chrono::microseconds totalDuration = std::accumulate(durations.begin(), durations.end(), std::chrono::microseconds(0));
-    std::chrono::microseconds avgDuration = totalDuration / n;
-    std::chrono::microseconds minDuration = *std::min_element(durations.begin(), durations.end());
-    std::chrono::microseconds maxDuration = *std::max_element(durations.begin(), durations.end());
+    std::string line;
+    while (std::getline(file, line)) {
+        lines.push_back(line);
+    }
 
-    // Output stats
-    std::cout << "Average Duration: " << avgDuration.count() << " microseconds\n";
-    std::cout << "Min Duration: " << minDuration.count() << " microseconds\n";
-    std::cout << "Max Duration: " << maxDuration.count() << " microseconds\n";
+    file.close();
+    return lines;
 }
+
 }  // namespace utils

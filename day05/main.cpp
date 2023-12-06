@@ -1,28 +1,10 @@
 #include <map>
 #include <sstream>
 
+#include "FileData.hpp"
 #include "utils.hpp"
 
 namespace original {
-
-std::string vectorToString(const std::vector<int64_t>& vec) {
-    if (vec.empty()) {
-        return "[]";
-    }
-
-    std::ostringstream oss;
-    oss << "[";
-
-    for (size_t i = 0; i < vec.size(); ++i) {
-        if (i > 0) {
-            oss << ", ";
-        }
-        oss << vec[i];
-    }
-
-    oss << "]";
-    return oss.str();
-}
 
 using namespace std::literals::string_view_literals;
 
@@ -38,8 +20,8 @@ class NumberMapper {
     std::string destination_;
 
     NumberMapper(std::string source, std::string destination, std::vector<MapEntry>& mappings) {
-        source_ = std::move(source);
-        destination_ = std::move(destination);
+        source_ = source;
+        destination_ = destination;
 
         for (const auto& mapping : mappings) {
             rangeMap_[{mapping.sourceStart, mapping.sourceStart + mapping.rangeLength - 1}] = mapping.destStart - mapping.sourceStart;
@@ -61,39 +43,12 @@ class NumberMapper {
     std::map<std::pair<int64_t, int64_t>, int64_t> rangeMap_;
 };
 
-std::vector<int64_t> extractNumbers(const std::string_view& line) {
-    std::vector<int64_t> numbers;
-    auto head = line.begin();
-    auto end = line.end();
-
-    int64_t number;
-    while (head != end) {
-        if (*head == ' ') {
-            // skip whitespace
-            ++head;
-            continue;
-        } else {
-            // Parse the number
-            auto [ptr, ec] = std::from_chars(head, end, number);
-            if (ec == std::errc()) {
-                numbers.push_back(number);
-            } else {
-                std::cout << line;
-                throw std::runtime_error("Parsing error occurred");
-            }
-            // Advance to the next part of the string
-            head = ptr;
-        }
-    }
-    return numbers;
-}
-
 bool isSeedLine(const std::string_view& line) {
     return line.starts_with("seeds:"sv);
 }
 
 std::vector<int64_t> extractSeeds(const std::string_view& line) {
-    return extractNumbers(line.substr(7));
+    return utils::extractNumbers<int64_t>(line.substr(7));
 }
 
 bool isMapNameLine(const std::string_view& line) {
@@ -122,7 +77,7 @@ bool isMapEntry(const std::string_view& line) {
 }
 
 MapEntry extractEntry(const std::string_view& line) {
-    std::vector<int64_t> numbers = extractNumbers(line);
+    std::vector<int64_t> numbers = utils::extractNumbers<int64_t>(line);
     if (numbers.size() == 3) {
         return MapEntry{numbers[0], numbers[1], numbers[2]};
     } else {
@@ -142,16 +97,13 @@ std::string translateNumbers(const std::vector<NumberMapper>& mappers, std::stri
 
 int64_t solution_one() {
     try {
-        utils::LineIterator it("input.txt");
-
         std::vector<int64_t> seeds;
         std::vector<NumberMapper> mappers;
         bool readingMap{false};
         std::pair<std::string, std::string> mapname;
         std::vector<MapEntry> entries;
 
-        for (; it != utils::LineIterator(); ++it) {
-            std::string_view line = it.currentLineView();
+        for (const std::string_view line : input::inputContent) {
             // first line should contain the seeds
             if (seeds.empty() and isSeedLine(line)) {
                 seeds = extractSeeds(line);
@@ -189,7 +141,7 @@ int64_t solution_one() {
 }
 
 std::vector<std::pair<int64_t, int64_t>> extractSeedRanges(const std::string_view& line) {
-    auto seednumbers{extractNumbers(line.substr(7))};
+    auto seednumbers{utils::extractNumbers<int64_t>(line.substr(7))};
     std::vector<std::pair<int64_t, int64_t>> seedpairs;
 
     for (size_t i = 0; i < seednumbers.size(); i += 2) {
@@ -206,16 +158,13 @@ const NumberMapper& getMapper(const std::vector<NumberMapper>& mappers, std::str
 // should use something like interval/segment tree, currently VERY slow
 int64_t solution_two() {
     try {
-        utils::LineIterator it("input.txt");
-
         std::vector<std::pair<int64_t, int64_t>> seedpairs;
         std::vector<NumberMapper> mappers;
         bool readingMap{false};
         std::pair<std::string, std::string> mapname;
         std::vector<MapEntry> entries;
 
-        for (; it != utils::LineIterator(); ++it) {
-            std::string_view line = it.currentLineView();
+        for (const std::string_view line : input::inputContent) {
             // first line should contain the seeds
             if (seedpairs.empty() and isSeedLine(line)) {
                 seedpairs = extractSeedRanges(line);
@@ -270,11 +219,10 @@ int64_t solution_two() {
 int main() {
     const size_t n{10};
 
-    std::cout << original::solution_two() << std::endl;
-    // std::cout << "Solution one" << std::endl;
-    // utils::benchmark(original::solution_one, n);
+    std::cout << "Solution one" << std::endl;
+    utils::benchmark<n>(original::solution_one);
 
     // std::cout << "\nSolution two" << std::endl;
-    // utils::benchmark(original::solution_two, n);
+    // utils::benchmark<n>(original::solution_two);
     return 0;
 }
