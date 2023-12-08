@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 include_directories(./common)
 
 # ADD SUBDIRECTORY
+add_subdirectory(day08)
 # add_subdirectory(day01)
 # add_subdirectory(day02)
 # add_subdirectory(day03)
