@@ -7,6 +7,7 @@ include_directories(./common)
 
 # ADD SUBDIRECTORY
 add_subdirectory(day08)
+add_subdirectory(day09)
 # add_subdirectory(day01)
 # add_subdirectory(day02)
 # add_subdirectory(day03)

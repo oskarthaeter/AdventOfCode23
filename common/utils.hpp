@@ -59,8 +59,11 @@ void benchmark(std::function<void()> code) {
     std::chrono::high_resolution_clock::time_point start;
     std::chrono::high_resolution_clock::time_point stop;
 
-    std::vector<std::chrono::microseconds> durations;
-    std::chrono::microseconds duration;
+    std::chrono::microseconds totalDuration{std::chrono::microseconds::zero()};
+    std::chrono::microseconds minDuration{std::chrono::microseconds::max()};
+    std::chrono::microseconds maxDuration{std::chrono::microseconds::min()};
+
+    std::chrono::microseconds currentDuration;
 
     for (size_t i = 0; i < N; ++i) {
         start = std::chrono::high_resolution_clock::now();
@@ -69,26 +72,29 @@ void benchmark(std::function<void()> code) {
 
         stop = std::chrono::high_resolution_clock::now();
 
-        duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-        durations.emplace_back(duration);
+        currentDuration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        totalDuration += currentDuration;
+        if (currentDuration > maxDuration) {
+            maxDuration = currentDuration;
+        }
+        if (currentDuration < minDuration) {
+            minDuration = currentDuration;
+        }
     }
 
-    // Calculate average, min, and max durations
-    std::chrono::microseconds totalDuration = std::accumulate(durations.begin(), durations.end(), std::chrono::microseconds(0));
-    std::chrono::microseconds avgDuration = totalDuration / N;
-    std::chrono::microseconds minDuration = *std::min_element(durations.begin(), durations.end());
-    std::chrono::microseconds maxDuration = *std::max_element(durations.begin(), durations.end());
-
-    // Output stats
-    std::cout << "Average Duration: " << avgDuration.count() << " microseconds\n";
-    std::cout << "Min Duration: " << minDuration.count() << " microseconds\n";
-    std::cout << "Max Duration: " << maxDuration.count() << " microseconds\n";
+    // Output stats in microseconds
+    std::cout << "Avg Duration: " << (totalDuration.count() / N) << " µs\n";
+    std::cout << "Min Duration: " << minDuration.count() << " µs\n";
+    std::cout << "Max Duration: " << maxDuration.count() << " µs\n";
 }
 
 template <typename T>
-std::vector<T> extractNumbers(const std::string_view& line) {
+std::vector<T> extractNumbers(const std::string_view& line, size_t sizeHint = 0) {
     static_assert(std::is_integral<T>::value, "Template type T must be an integral type.");
     std::vector<T> numbers;
+    if (sizeHint != 0) {
+        numbers.reserve(sizeHint);
+    }
     auto head = line.begin();
     auto end = line.end();
 
@@ -102,7 +108,7 @@ std::vector<T> extractNumbers(const std::string_view& line) {
             // Parse the number
             auto [ptr, ec] = std::from_chars(head, end, number);
             if (ec == std::errc()) {
-                numbers.push_back(number);
+                numbers.emplace_back(number);
             } else {
                 std::cout << line;
                 throw std::runtime_error("Parsing error occurred");
