@@ -15,6 +15,7 @@ add_subdirectory(day06)
 add_subdirectory(day07)
 add_subdirectory(day08)
 add_subdirectory(day09)
+add_subdirectory(day10)
 
 # Common utilities (if any)
 add_library(common STATIC common/utils.cpp)
