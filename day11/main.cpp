@@ -35,7 +35,7 @@ long solution_one() {
         size_t y{0};  // height counter
         bool emptyRow;
         size_t emptyRows{0};
-        for (std::string_view line : input::inputContent) {
+        for (const std::string_view line : input::inputContent) {
             emptyRow = true;
             x = 0;
             for (char c : line) {
@@ -71,7 +71,7 @@ long solution_two() {
         size_t y{0};  // height counter
         bool emptyRow;
         size_t emptyRows{0};
-        for (std::string_view line : input::inputContent) {
+        for (const std::string_view line : input::inputContent) {
             emptyRow = true;
             x = 0;
             for (char c : line) {

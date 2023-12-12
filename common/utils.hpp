@@ -57,23 +57,24 @@ std::array<std::string, N> readLinesFromFile(const std::string& filename) {
 
 template <size_t N>
 void benchmark(std::function<void()> code) {
-    std::chrono::high_resolution_clock::time_point start;
-    std::chrono::high_resolution_clock::time_point stop;
+    if (N == 0) {
+        throw std::invalid_argument("Number of iterations must be greater than zero.");
+    }
 
-    std::chrono::microseconds totalDuration{std::chrono::microseconds::zero()};
-    std::chrono::microseconds minDuration{std::chrono::microseconds::max()};
-    std::chrono::microseconds maxDuration{std::chrono::microseconds::min()};
+    using namespace std::chrono;
 
-    std::chrono::microseconds currentDuration;
+    high_resolution_clock::time_point start, stop;
+
+    microseconds totalDuration{0}, minDuration{microseconds::max()}, maxDuration{0};
 
     for (size_t i = 0; i < N; ++i) {
-        start = std::chrono::high_resolution_clock::now();
+        start = high_resolution_clock::now();
 
-        code();
+        code();  // Consider try-catch block here if exceptions are possible
 
-        stop = std::chrono::high_resolution_clock::now();
+        stop = high_resolution_clock::now();
 
-        currentDuration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        auto currentDuration = duration_cast<microseconds>(stop - start);
         totalDuration += currentDuration;
         if (currentDuration > maxDuration) {
             maxDuration = currentDuration;
@@ -83,8 +84,8 @@ void benchmark(std::function<void()> code) {
         }
     }
 
-    // Output stats in microseconds
-    std::cout << "Avg Duration: " << (totalDuration.count() / N) << " µs\n";
+    // Output stats in microseconds, with floating-point precision for average
+    std::cout << "Avg Duration: " << static_cast<double>(totalDuration.count()) / N << " µs\n";
     std::cout << "Min Duration: " << minDuration.count() << " µs\n";
     std::cout << "Max Duration: " << maxDuration.count() << " µs\n";
 }
@@ -101,8 +102,8 @@ std::vector<T> extractNumbers(const std::string_view& line, size_t sizeHint = 0)
 
     T number;
     while (head != end) {
-        if (*head == ' ') {
-            // skip whitespace
+        if (not std::isdigit(*head)) {
+            // skip non digits
             ++head;
             continue;
         } else {
@@ -165,6 +166,26 @@ std::string vectorToString(const std::vector<T>& vec) {
             oss << ", ";
         }
         oss << vec[i];
+    }
+
+    oss << "]";
+    return oss.str();
+}
+
+template <typename T, size_t N>
+std::string arrayToString(const std::array<T, N>& arr) {
+    if (arr.empty()) {
+        return "[]";
+    }
+
+    std::ostringstream oss;
+    oss << "[";
+
+    for (size_t i = 0; i < N; ++i) {
+        if (i > 0) {
+            oss << ", ";
+        }
+        oss << arr[i];
     }
 
     oss << "]";

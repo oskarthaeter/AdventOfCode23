@@ -23,7 +23,7 @@ process_file() {
     while IFS= read -r line || [ -n "$line" ]; do
         local escaped_line=$(echo "$line" | sed 's/"/\\"/g')
         file_contents_raw="${file_contents_raw}${escaped_line}\\n"
-        file_contents_array="${file_contents_array}\"${escaped_line}\","
+        file_contents_array="${file_contents_array}\"${escaped_line}\"sv,"
         ((line_count++))
     done < "$SOURCE_DIR/$INPUT_FILE"
 
@@ -33,9 +33,11 @@ process_file() {
     # Append the processed content to the header file
     {
         echo "namespace input {"
+        echo "using namespace std::literals::string_view_literals;"
+        echo ""
         echo "constexpr char ${VAR_PREFIX}Raw[] = R\"(${file_contents_raw})\";"
         echo ""
-        echo "inline const std::array<std::string, ${line_count}> ${VAR_PREFIX}Content = {"
+        echo "constexpr inline const std::array<std::string_view, ${line_count}> ${VAR_PREFIX}Content = {"
         echo "    ${file_contents_array}"
         echo "};"
         echo ""
@@ -48,8 +50,8 @@ process_file() {
 > "$SOURCE_DIR/$HEADER_FILE"
 
 # Add necessary includes
-echo "#include <string>" >> "$SOURCE_DIR/$HEADER_FILE"
-echo "#include <vector>" >> "$SOURCE_DIR/$HEADER_FILE"
+echo "#pragma once" >> "$SOURCE_DIR/$HEADER_FILE"
+echo "#include <string_view>" >> "$SOURCE_DIR/$HEADER_FILE"
 echo "#include <array>" >> "$SOURCE_DIR/$HEADER_FILE"
 echo "" >> "$SOURCE_DIR/$HEADER_FILE"
 

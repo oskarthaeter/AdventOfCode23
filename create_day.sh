@@ -37,7 +37,7 @@ uint64_t solution_one() {
     try {
         uint64_t result{0};
 
-        for (const std::string& line : input::inputContent) {
+        for (const std::string_view line : input::inputContent) {
             
         }
         return result;
@@ -51,7 +51,7 @@ uint64_t solution_two() {
     try {
         uint64_t result{0};
 
-        for (const std::string& line : input::inputContent) {
+        for (const std::string_view line : input::inputContent) {
             
         }
         return result;
