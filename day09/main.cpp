@@ -103,12 +103,12 @@ int64_t solution_two() {
 }  // namespace original
 
 int main() {
-    const size_t n{100};
+    constexpr size_t n{100};
 
-    std::cout << "Solution one" << std::endl;
+    std::cout << "Part 1: " << original::solution_one() << std::endl;
     utils::benchmark<n>(original::solution_one);
 
-    std::cout << "\nSolution two" << std::endl;
+    std::cout << "Part 2: " << original::solution_two() << std::endl;
     utils::benchmark<n>(original::solution_two);
 
     return 0;

@@ -5,6 +5,7 @@
 
 using namespace std::literals;
 
+namespace original {
 // get first and last digit on line
 // return combination of digits: <first digit><last digit>
 int calibrationValue_one(const std::string_view line) {
@@ -115,12 +116,15 @@ uint64_t solution_two() {
     }
 }
 
+}  // namespace original
 int main() {
-    const size_t n{10};
+    constexpr size_t n{100};
 
-    std::cout << "Solution one" << std::endl;
-    utils::benchmark<n>(solution_one);
+    std::cout << "Part 1: " << original::solution_one() << std::endl;
+    utils::benchmark<n>(original::solution_one);
 
-    std::cout << "\nSolution two" << std::endl;
-    utils::benchmark<n>(solution_two);
+    std::cout << "Part 2: " << original::solution_two() << std::endl;
+    utils::benchmark<n>(original::solution_two);
+
+    return 0;
 }
