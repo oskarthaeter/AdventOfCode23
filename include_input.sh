@@ -23,7 +23,7 @@ process_file() {
     while IFS= read -r line || [ -n "$line" ]; do
         local escaped_line=$(echo "$line" | sed 's/"/\\"/g')
         file_contents_raw="${file_contents_raw}${escaped_line}\\n"
-        file_contents_array="${file_contents_array}\"${escaped_line}\"sv,"
+        file_contents_array="${file_contents_array}R\"(${escaped_line})\"sv,"
         ((line_count++))
     done < "$SOURCE_DIR/$INPUT_FILE"
 
