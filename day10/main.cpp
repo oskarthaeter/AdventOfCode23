@@ -236,10 +236,10 @@ size_t twoProngedDFS(PipeMap& map) {
     std::pair<Direction, Direction> dirs{startDirections(map)};
 
     auto onePos = nextPosition(map.start, dirs.first);
-    SearchState one{nextDirection(dirs.first, &map.tiles[onePos.second][onePos.first]), onePos, &map.tiles[onePos.second][onePos.first], 1uz};
+    SearchState one{nextDirection(dirs.first, &map.tiles[onePos.second][onePos.first]), onePos, &map.tiles[onePos.second][onePos.first], (size_t)1};
 
     auto twoPos = nextPosition(map.start, dirs.second);
-    SearchState two{nextDirection(dirs.second, &map.tiles[twoPos.second][twoPos.first]), twoPos, &map.tiles[twoPos.second][twoPos.first], 1uz};
+    SearchState two{nextDirection(dirs.second, &map.tiles[twoPos.second][twoPos.first]), twoPos, &map.tiles[twoPos.second][twoPos.first], (size_t)1};
 
     while (true) {
         // does the headTile already have a distance set?
